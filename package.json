@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "not-a-real-website",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -11,5 +11,8 @@
   },
   "dependencies": {
     "astro": "^2.1.6"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.7"
   }
 }
