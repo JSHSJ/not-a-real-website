@@ -68,8 +68,8 @@ import Layout from "../layouts/Layout.astro";
     margin: 5dvh auto;
     padding: 0;
     border-radius: var(--dialog-radius);
-    animation: open-dialog 0.3s ease-in-out;
-    position: relative;
+    animation: open-dialog 0.3s ease-in-out forwards;
+    position: fixed;
   }
 
   .dialog-container {
@@ -134,7 +134,7 @@ import Layout from "../layouts/Layout.astro";
   }
 
   dialog.-closing {
-    animation: close-dialog 0.3s ease-in-out;
+    animation: close-dialog 0.3s ease-in-out forwards;
   }
 
   @keyframes open-dialog {
