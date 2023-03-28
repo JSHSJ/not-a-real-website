@@ -1,0 +1,200 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Modals">
+  <main id="modals">
+    <h1>What's a dialog?</h1>
+    <dialog data-id="dialog-1" data-level="1">
+      <div class="dialog-container">
+        <div class="dialog-header">
+          <h2 class="dialog-title">I'm a dialog (1)</h2>
+          <button data-closes-dialog="dialog-1">X</button>
+        </div>
+        <div class="dialog-content">
+          <button data-opens-dialog="dialog-2">Show me the next dialog</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog data-id="dialog-2">
+      <div class="dialog-container">
+        <div class="dialog-header">
+          <input type="text" placeholder="Type something" />
+          <button data-closes-dialog="dialog-2">X</button>
+        </div>
+        <div class="dialog-content">
+          <button data-opens-dialog="dialog-3">Show me the next dialog</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog data-id="dialog-3">
+      <div class="dialog-container">
+        <div class="dialog-header">
+          <button data-closes-dialog="dialog-3">X</button>
+        </div>
+        <div class="dialog-content">
+          <p>You made it here. Nice!</p>
+        </div>
+      </div>
+    </dialog>
+    <button data-opens-dialog="dialog-1">Show me the dialog</button>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+  }
+
+  dialog {
+    --dialog-radius: 4px;
+    --dialog-padding-inline: var(--space-away);
+    --dialog-close-size: calc(3rem - 2 * var(--space-near));
+
+    border: var(--border-width-subtle) solid var(--border-color-strong);
+    inline-size: calc(100dvw - 2 * var(--space-away));
+    block-size: 90dvh;
+    max-inline-size: 28rem;
+    background: var(--color-surface-strong);
+    box-shadow: 4.5px 4.5px 3.6px rgba(0, 123, 255, 0.024),
+      12.5px 12.5px 10px rgba(0, 123, 255, 0.035),
+      30.1px 30.1px 24.1px rgba(0, 123, 255, 0.046),
+      100px 100px 80px rgba(0, 123, 255, 0.07);
+    margin: 5dvh auto;
+    padding: 0;
+    border-radius: var(--dialog-radius);
+    animation: open-dialog 0.3s ease-in-out;
+    position: relative;
+  }
+
+  .dialog-container {
+    display: grid;
+    grid-template:
+      "header header" 3rem
+      "content content" 1fr
+      "footer footer" 1fr / 1fr 1fr;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .dialog-header {
+    grid-area: header;
+    border-bottom: var(--border-width-subtle) solid var(--border-color-subtle);
+    background-color: var(--color-surface-subtle);
+    padding-inline: var(--dialog-padding-inline);
+    border-radius: var(--dialog-radius) var(--dialog-radius) 0 0;
+    display: grid;
+    grid-template: "title close" / 1fr var(--dialog-close-size);
+    align-items: flex-start;
+    padding-block: var(--space-near);
+  }
+
+  .dialog-header > button[data-closes-dialog] {
+    grid-area: close;
+    display: grid;
+    place-content: center;
+    border: var(--border-width-subtle) solid var(--border-color-subtle);
+    inline-size: var(--dialog-close-size);
+    block-size: var(--dialog-close-size);
+    background: var(--color-surface-strong);
+    color: var(--color-text-strong);
+  }
+
+  .dialog-header > button[dta-closes-dialog]:hover {
+    color: var(--color-accent-subtle);
+  }
+
+  .dialog-title {
+    font-size: 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dialog-content {
+    grid-area: content;
+    padding-inline: var(--dialog-padding-inline);
+    padding-block: var(--space-near);
+  }
+
+  html:has(dialog[open]) {
+    overflow: hidden;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+  }
+
+  dialog::backdrop {
+    background: rgb(0, 123, 255, 0.1);
+    opacity: 0.1;
+    backdrop-filter: blur(2px);
+  }
+
+  dialog.-closing {
+    animation: close-dialog 0.3s ease-in-out;
+  }
+
+  @keyframes open-dialog {
+    from {
+      transform: translate(100%, 10dvh) rotate(20deg);
+    }
+    to {
+      transform: translate(0dvh, 0%) rotate(0deg);
+    }
+  }
+
+  @keyframes close-dialog {
+    from {
+      transform: translate(0dvh, 0%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, 100dvh) rotate(-5deg);
+    }
+  }
+</style>
+
+<script>
+  const dialogs = document.querySelectorAll("dialog");
+  const openButtons = document.querySelectorAll("button[data-opens-dialog]");
+  const closeButtons = document.querySelectorAll("button[data-closes-dialog]");
+  const openDialogs: HTMLDialogElement[] = [];
+
+  openButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const dialog = document.querySelector(
+        `[data-id="${button.dataset.opensDialog}"]`
+      );
+      dialog.showModal();
+      openDialogs.push(dialog);
+      dialog.style.top = `${openDialogs.length}dvh`;
+    });
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      closeCurrentDialog();
+    });
+  });
+
+  const closeCurrentDialog = () => {
+    const currentDialog = openDialogs.pop();
+    if (!currentDialog) {
+      return;
+    }
+
+    currentDialog.addEventListener(
+      "animationend",
+      () => {
+        console.log("animation ended");
+        currentDialog.classList.remove("-closing");
+        currentDialog.close();
+      },
+      { once: true }
+    );
+
+    currentDialog.classList.add("-closing");
+  };
+</script>

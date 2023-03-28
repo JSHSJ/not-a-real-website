@@ -1,0 +1,53 @@
+:root {
+  --color-text-subtle: #6c757d;
+  --color-text-strong: #212529;
+
+  --color-surface-subtle: #f8f9fa;
+  --color-surface-strong: #fff;
+
+  --color-accent-subtle: #007bff;
+  --color-accent-strong: #0dcaf0;
+
+  --border-width-subtle: 1px;
+  --border-width-strong: 4px;
+  --border-color-subtle: #dee2e6;
+  --border-color-strong: #ced4da;
+
+  --space-near: 0.5rem;
+  --space-away: 1.25rem;
+}
+
+*,
+:after,
+:before {
+  box-sizing: border-box;
+  accent-color: var(--color-accent-strong);
+}
+
+:where(html) {
+  block-size: 100%;
+  inline-size: 100%;
+  -webkit-text-size-adjust: none; /* https://kilianvalkhof.com/2022/css-html/your-css-reset-needs-text-size-adjust-probably/ */
+
+  /* @media (--motionOK) {
+        & {
+            scroll-behavior: smooth;
+        }
+    } */
+}
+
+:where(body) {
+  min-block-size: 100%;
+  min-inline-size: 100%;
+  padding: 0;
+  margin: 0;
+
+  font-weight: 400;
+
+  color: var(--color-text-subtle);
+  background-color: var(--color-surface-subtle);
+
+  font-family: system-ui;
+  line-height: 1.6;
+  font-style: normal;
+}

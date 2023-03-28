@@ -20,7 +20,7 @@ import Layout from "../layouts/Layout.astro";
     max-width: 60ch;
     font-size: clamp(1.25rem, 5vw, 2.5rem);
     font-weight: 500;
-    color: #212121;
+    color: var(--color-text-strong);
     text-wrap: balance;
     padding-inline: 0.25em;
   }
@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
     display: block;
     content: "";
     inline-size: 100%;
-    block-size: 4px;
+    block-size: var(--border-width-strong);
     background: linear-gradient(to right, yellow, red, blue, green, yellow);
     background-size: 200%;
     animation: 2s bg linear infinite;
