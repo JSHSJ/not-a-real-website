@@ -49,12 +49,14 @@ import Layout from "../layouts/Layout.astro";
     inline-size: 100%;
     block-size: 100%;
     overflow: hidden;
+    min-block-size: 100dvh;
   }
 
   dialog {
-    --dialog-radius: 4px;
+    --dialog-radius: var(--border-radius-strong);
     --dialog-padding-inline: var(--space-away);
-    --dialog-close-size: calc(3rem - 2 * var(--space-near));
+    --dialog-close-size: 2.5em;
+    --dialog-inative-offset: 0;
 
     border: var(--border-width-subtle) solid var(--border-color-strong);
     inline-size: calc(100dvw - 2 * var(--space-away));
@@ -68,14 +70,15 @@ import Layout from "../layouts/Layout.astro";
     margin: 5dvh auto;
     padding: 0;
     border-radius: var(--dialog-radius);
-    animation: open-dialog 0.3s ease-in-out forwards;
+    animation: open-dialog 0.3s cubic-bezier(0, 0.6, 0.58, 1);
     position: fixed;
+    transition: transform 0.3s cubic-bezier(0, 0.6, 0.58, 1);
   }
 
   .dialog-container {
     display: grid;
     grid-template:
-      "header header" 3rem
+      "header header" calc(2 * var(--space-near) + var(--dialog-close-size))
       "content content" 1fr
       "footer footer" 1fr / 1fr 1fr;
     inline-size: 100%;
@@ -96,17 +99,8 @@ import Layout from "../layouts/Layout.astro";
 
   .dialog-header > button[data-closes-dialog] {
     grid-area: close;
-    display: grid;
-    place-content: center;
-    border: var(--border-width-subtle) solid var(--border-color-subtle);
     inline-size: var(--dialog-close-size);
     block-size: var(--dialog-close-size);
-    background: var(--color-surface-strong);
-    color: var(--color-text-strong);
-  }
-
-  .dialog-header > button[dta-closes-dialog]:hover {
-    color: var(--color-accent-subtle);
   }
 
   .dialog-title {
@@ -134,7 +128,11 @@ import Layout from "../layouts/Layout.astro";
   }
 
   dialog.-closing {
-    animation: close-dialog 0.3s ease-in-out forwards;
+    animation: close-dialog 0.3s cubic-bezier(0.7, 0, 1, 1) forwards;
+  }
+
+  dialog.-inactive {
+    transform: translate(0, var(--dialog-inative-offset)) scale(0.98);
   }
 
   @keyframes open-dialog {
@@ -157,7 +155,6 @@ import Layout from "../layouts/Layout.astro";
 </style>
 
 <script>
-  const dialogs = document.querySelectorAll("dialog");
   const openButtons = document.querySelectorAll("button[data-opens-dialog]");
   const closeButtons = document.querySelectorAll("button[data-closes-dialog]");
   const openDialogs: HTMLDialogElement[] = [];
@@ -168,8 +165,14 @@ import Layout from "../layouts/Layout.astro";
         `[data-id="${button.dataset.opensDialog}"]`
       );
       dialog.showModal();
+      openDialogs.forEach((d, idx) => {
+        d.style.setProperty(
+          "--dialog-inative-offset",
+          `${-1 * (openDialogs.length + 1 - idx)}dvh`
+        );
+        d.classList.add("-inactive");
+      });
       openDialogs.push(dialog);
-      dialog.style.top = `${openDialogs.length}dvh`;
     });
   });
 
@@ -188,9 +191,9 @@ import Layout from "../layouts/Layout.astro";
     currentDialog.addEventListener(
       "animationend",
       () => {
-        console.log("animation ended");
         currentDialog.classList.remove("-closing");
         currentDialog.close();
+        openDialogs[openDialogs.length - 1].classList.remove("-inactive");
       },
       { once: true }
     );

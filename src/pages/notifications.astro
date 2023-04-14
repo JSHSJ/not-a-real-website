@@ -1,0 +1,201 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+/**
+ * Ideas:
+ * Group non-dismissed notifcations
+ * Have toggle for notifications
+ * Show amount of notifications
+ * SHow time in notification
+ */
+---
+
+<Layout title="Modals">
+  <main id="notifications">
+    <h1>Notifications?</h1>
+
+    <button
+      data-has-notification
+      data-notification-title="Hallo"
+      data-notification-description="This is the shit.">Notify me!</button
+    >
+    <button data-toggle-notification-center>Show Notifications</button>
+
+    <div class="notification-center -archive">
+      <div class="notification-center-header">
+        <button data-notifications-dismiss-all>Dismiss all</button>
+        <button data-toggle-notification-center>close</button>
+      </div>
+      <div class="notification-center-container"></div>
+    </div>
+
+    <output class="notification-output"></output>
+
+    <template id="notification">
+      <div class="notification">
+        <p class="notification-title"></p>
+        <p class="notification-description">Some notification</p>
+        <div class="notification-footer">
+          <button>Dismiss</button>
+
+          <time class="notification-time"></time>
+        </div>
+      </div>
+    </template>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+    min-block-size: 100dvh;
+  }
+
+  @layer notifcations;
+
+  @layer notifcations {
+    #notifications {
+      --notifications-max-width: 20rem;
+      --notification-gap: var(--space-away);
+    }
+
+    .notification-center,
+    .notification-output {
+      position: fixed;
+      top: 0;
+      right: 0;
+      inline-size: 100%;
+      block-size: 100%;
+      max-inline-size: var(--notifications-max-width);
+      padding-block: var(--notification-gap);
+      pointer-events: none;
+    }
+
+    .notification-center {
+      block-size: 100%;
+      backdrop-filter: blur(2px);
+      background-color: rgba(0, 0, 0, 0.05);
+      transform: translate(100%, 0);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .notification-output,
+    .notification-center-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--notification-gap);
+      inline-size: 100%;
+      overflow-y: scroll;
+      max-block-size: 100%;
+      padding-inline: var(--notification-gap);
+      min-inline-size: 0;
+      min-block-size: 0;
+    }
+
+    .notification-center.-open {
+      pointer-events: all;
+      transform: translate(0, 0);
+    }
+
+    .notification-center-header {
+      display: flex;
+      align-items: center;
+      gap: var(--notification-gap);
+      padding-inline: var(--notification-gap);
+      margin-block-end: var(--notification-gap);
+    }
+
+    .notification {
+      padding: var(--space-near);
+      background: var(--color-surface-strong);
+      border: var(--border-width-subtle) solid var(--border-color-subtle);
+      display: flex;
+      flex-direction: column;
+      inline-size: 100%;
+      border-radius: var(--border-radius-subtle);
+      box-shadow: 2.3px 2.3px 1.5px rgba(0, 0, 0, 0.017),
+        6.3px 6.3px 4.1px rgba(0, 0, 0, 0.025),
+        15.1px 15.1px 9.9px rgba(0, 0, 0, 0.033),
+        50px 50px 33px rgba(0, 0, 0, 0.05);
+      animation: pop-in 0.3s cubic-bezier(0, 0.6, 0.58, 1);
+      color: var(--color-text-strong);
+      pointer-events: all;
+    }
+
+    #notifications .notification p {
+      margin: 0;
+      padding: 0;
+    }
+
+    #notifications .notification-title {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    #notifications .notification-description {
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+
+    #notifications .notification-time {
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--color-text-subtle);
+    }
+
+    #notifications .notification-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      inline-size: 100%;
+      margin-block-start: var(--space-near);
+    }
+
+    #notifications button {
+      background: none;
+      color: var(--color-text-subtle);
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      min-height: 1em;
+    }
+
+    #notifications button:hover {
+      color: var(--color-text-strong);
+      border-color: var(--border-color-strong);
+    }
+
+    #notifications .notification.-closing {
+      animation: remove-notification 0.3s cubic-bezier(0.7, 0, 1, 1) forwards;
+    }
+  }
+
+  @keyframes pop-in {
+    0% {
+      transform: translate(3vmin, -2vmin) scale(0.98);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(0, -1vmin) scale(0.98);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes remove-notification {
+    to {
+      transform: translate(0, 4vmin) scale(0.98);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script src="../scripts/notifications.js"></script>

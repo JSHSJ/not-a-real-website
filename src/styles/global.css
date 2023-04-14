@@ -8,13 +8,16 @@
   --color-accent-subtle: #007bff;
   --color-accent-strong: #0dcaf0;
 
-  --border-width-subtle: 1px;
-  --border-width-strong: 4px;
+  --border-width-subtle: calc(1em / 16);
+  --border-width-strong: calc(1em / 4);
   --border-color-subtle: #dee2e6;
   --border-color-strong: #ced4da;
 
-  --space-near: 0.5rem;
-  --space-away: 1.25rem;
+  --border-radius-subtle: 0.25em;
+  --border-radius-strong: 0.5em;
+
+  --space-near: 0.5em;
+  --space-away: 1.25em;
 }
 
 *,
@@ -50,4 +53,26 @@
   font-family: system-ui;
   line-height: 1.6;
   font-style: normal;
+}
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    color: var(--color-text-strong);
+    background-color: transparent;
+    min-block-size: 2.5em;
+    display: flex;
+align-items: center;
+    justify-content: center;
+    border: var(--border-width-subtle) solid var(--border-color-strong);
+    padding: 0 var(--space-away);
+    border-radius: var(--border-radius-subtle);
+    margin: 0;
+    cursor: pointer;
+}
+
+button:hover {
+    color: var(--color-accent-subtle);
 }
