@@ -103,6 +103,11 @@ import Layout from "../layouts/Layout.astro";
       transform: translate(0, 0);
     }
 
+    .notification-center.-open:has(+ .notification-output > .notification) {
+      opacity: 0.5;
+      filter: contrast(0.5);
+    }
+
     .notification-center-header {
       display: flex;
       align-items: center;
